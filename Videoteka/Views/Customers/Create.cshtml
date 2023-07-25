@@ -1,0 +1,44 @@
+﻿@model Videoteka.ViewModels.CustomerViewModel
+
+<h2>Dodavanje novog korisnika</h2>
+
+@using (Html.BeginForm())
+{
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" }})
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.BirthDate, htmlAttributes: new { @class = "control-label" })
+        @Html.EditorFor(model => model.BirthDate, new { htmlAttributes = new { @class = "form-control", @Value = Model.BirthDate.ToString("dd/MM/yyyy") } })
+        @Html.ValidationMessageFor(model => model.BirthDate, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MembershipTypeId, htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.MembershipTypeId, new SelectList(ViewBag.MembershipTypes, "Id", "Name"), "Izaberite članstvo", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.MembershipTypeId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CustomerTypeId, htmlAttributes: new { @class = "control-label" })
+        @Html.DropDownListFor(model => model.CustomerTypeId, new SelectList(ViewBag.CustomerTypes, "Id", "Name"), "Izaberite tip kupca", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.CustomerTypeId, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <div class="form-check">
+            @Html.CheckBoxFor(model => model.Notifications, new { @class = "form-check-input" })
+            @Html.LabelFor(model => model.Notifications, htmlAttributes: new { @class = "form-check-label" })
+        </div>
+        @Html.ValidationMessageFor(model => model.Notifications, "", new { @class = "text-danger" })
+    </div>
+
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <input type="submit" value="Dodaj korisnika" class="btn btn-primary" />
+    </div>
+}

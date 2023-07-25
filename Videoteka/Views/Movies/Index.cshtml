@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Videoteka.ViewModels.MovieViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="page-header pager">Filmovi</h2>
+<p>
+    @Html.ActionLink("Dodaj film", "New", "Movies", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Naziv</th>
+            <th>Žanr</th>
+            <th>Datum unosa</th>
+            <th>Datum izdanja</th>
+            <th>Na stanju</th>
+            <th>Broj dostupnih</th>
+            <th>Obriši film</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink(movie.Title, "Edit", "Movies", new { id = movie.Id }, null)</td>
+                <td>@movie.GenreName</td>
+                <td>@Html.DisplayFor(modelItem => @movie.DateAddedInDb)</td>
+                <td>@Html.DisplayFor(modelItem => @movie.DateOfMovie)</td>
+                <td>@movie.NumberInStock</td>
+                <td>@movie.NumberAvailable</td>
+                <td>
+                    @Html.ActionLink("Obriši film", "Delete", "Movies", new { id = movie.Id }, null)
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

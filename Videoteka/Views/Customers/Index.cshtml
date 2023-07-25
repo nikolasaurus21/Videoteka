@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Videoteka.ViewModels.CustomerViewModel>
+
+<h2 class="page-header pager ">Svi kupci</h2>
+
+<p>
+    @Html.ActionLink("Dodaj kupca", "Create", "Customers", null, new { @class = "btn btn-primary" })
+</p>
+<table class="table-striped table">
+    <tr>
+        <th>Ime</th>
+        <th>Datum rođenja</th>
+        <th>Članstvo</th>
+        <th>Tip kupca</th>
+        <th>Prima obavještenja</th>
+        <th>Obrisi kupca</th>
+    </tr>
+    @foreach (var customer in Model)
+    {
+        <tr>
+            <td>@Html.ActionLink(customer.Name, "Edit", "Customers", new { id = customer.Id }, null)</td>
+            <td>@Html.DisplayFor(modelItem => customer.BirthDate)</td>
+            <td>@customer.MembershipTypeName</td>
+            <td>@customer.CustomerTypeName</td>
+            <td>
+                @if (customer.Notifications)
+                {
+                    <span>Da</span>
+                }
+                else
+                {
+                    <span>Ne</span>
+                }
+            </td>
+            
+            <td>
+                @Html.ActionLink("Obriši kupca", "Delete", "Customers", new { id = customer.Id }, null)
+            </td>
+        </tr>
+    }
+</table>
+
+

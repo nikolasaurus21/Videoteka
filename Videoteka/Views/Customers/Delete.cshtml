@@ -1,0 +1,71 @@
+﻿@model Videoteka.ViewModels.CustomerViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <p>
+        <h2>Kupac: @Model.Name</h2>
+    </p>
+    <h4>Informacije</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Ime</dt>
+        <dd>@Html.DisplayFor(model => model.Name)</dd>
+
+        <dt>Tip članstva</dt>
+        <dd>@Html.DisplayFor(model => model.MembershipTypeName)</dd>
+
+        <dt>Tip korisnika</dt>
+        <dd>@Html.DisplayFor(model => model.CustomerTypeName)</dd>
+
+        <dt>Datum rođenja</dt>
+        <dd>@Html.DisplayFor(model => model.BirthDate)</dd>
+
+        <dt>Obavještenja</dt>
+        <dd>@Html.DisplayFor(model => model.Notifications)</dd>
+    </dl>
+
+    @using (Html.BeginForm("Delete", "Customers", new { id = Model.Id }, FormMethod.Post, new { id = "deleteForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <button type="button" class="btn btn-danger" onclick="openDeleteModal();">Izbriši</button>
+        @Html.ActionLink("Nazad", "Index", "Customers", null, new { @class = "btn btn-default" })
+    }
+</div>
+
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Potvrda brisanja korisnika</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Jeste li sigurni da želite obrisati ovog korisnika?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                <input type="submit" value="Izbriši" class="btn btn-danger" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openDeleteModal() {
+            $('#deleteModal').modal('show');
+        }
+
+        // Function to submit the form when the modal "Izbriši" button is clicked
+        $('#deleteModal').on('click', '.btn-danger', function () {
+            $('#deleteForm').submit();
+        });
+    </script>
+}

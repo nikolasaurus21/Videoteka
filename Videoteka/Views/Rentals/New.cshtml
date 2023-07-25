@@ -1,0 +1,170 @@
+﻿@using Videoteka.DTOs
+@model RentalDTO
+
+
+
+@{
+    ViewBag.Title = "Iznajmi film";
+}
+
+<h2 class="page-header">@ViewBag.Title</h2>
+
+<form id="newRental" novalidate>
+    <div class="form-group">
+        <label for="customer">Kupac</label>
+        <select id="customer" name="customer" class="form-control" required>
+            <option value="">Izaberite kupca</option>
+        </select>
+        <span id="customer-error" class="text-danger" style="display: none;">Morate unijeti kupca.</span>
+    </div>
+
+    <div class="form-group">
+        <label for="movie">Film</label>
+        <select id="movie" name="movie" class="form-control" required>
+            <option value="">Izaberite film</option>
+        </select>
+        <span id="movie-error" class="text-danger" style="display: none;">Morate unijeti film.</span>
+    </div>
+
+    <div class="form-group">
+        <label for="date">Datum</label>
+        <input id="date" name="date" type="datetime-local" value="" class="form-control" required />
+        <span id="date-error" class="text-danger" style="display: none;">Morate unijeti datum iznajmljivanja.</span>
+    </div>
+
+
+    <div class="form-group">
+        <label for="note">Napomena</label>
+        <input id="note" name="note" type="text" value="" class="form-control" />
+    </div>
+    @Html.AntiForgeryToken()
+    <button class="btn btn-primary">Iznajmi film</button>
+</form>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/toastr.js")
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+
+            function getCustomers() {
+                $.ajax({
+                    url: "/api/customers",
+                    method: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        var customerDropdown = $("#customer");
+                        customerDropdown.empty();
+                        customerDropdown.append('<option value="">Izaberite kupca</option>');
+                        $.each(data, function (index, customer) {
+                            customerDropdown.append('<option value="' + customer.id + '">' + customer.name + '</option>');
+                        });
+                    },
+                    error: function () {
+                        toastr.error("Greška prilikom učitavanja kupaca.");
+                    }
+                });
+            }
+
+            function getMovies() {
+                $.ajax({
+                    url: "/api/movies",
+                    method: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        var movieDropdown = $("#movie");
+                        movieDropdown.empty();
+                        movieDropdown.append('<option value="">Izaberite film</option>');
+                        $.each(data, function (index, movie) {
+                            movieDropdown.append('<option value="' + movie.id + '">' + movie.name + '</option>');
+                        });
+                    },
+                    error: function () {
+                        toastr.error("Greška prilikom učitavanja filmova.");
+                    }
+                });
+            }
+
+            getCustomers();
+            getMovies();
+
+          function getCsrfToken() {
+                return '@Html.AntiForgeryToken()';
+            }
+            
+            $("#newRental").submit(function (e) {
+                e.preventDefault();
+
+                var csrfToken = getCsrfToken();
+
+                var customerId = $("#customer").val();
+                var movieId = $("#movie").val();
+                var date = $("#date").val();
+                var note = $("#note").val();
+
+
+                $("#customer-error").hide();
+                $("#movie-error").hide();
+                $("#date-error").hide();
+
+                var hasErrors = false;
+
+                if (!customerId) {
+                    $("#customer-error").show();
+                    hasErrors = true;
+                }
+
+                if (!movieId) {
+                    $("#movie-error").show();
+                    hasErrors = true;
+                }
+
+                if (!date) {
+                    $("#date-error").show();
+                    hasErrors = true;
+                }
+
+                if (hasErrors) {
+                    return;
+                }
+
+                var isoFormattedDatetime = new Date(date).toISOString();
+
+                var rentalData = {
+                    CustomerId: customerId,
+                    MovieId: movieId,
+                    RentDate: isoFormattedDatetime,
+                    Note: note
+                };
+                var headers = {
+                    "X-CSRF-TOKEN": csrfToken
+                };
+
+                $.ajax({
+                    url: "/api/rentals",
+                    method: "POST",
+                    dataType: "json",
+                    contentType: "application/json",
+                    data: JSON.stringify(rentalData),
+                    headers: headers,
+
+                })
+                    .done(function (data) {
+                        toastr.success(data.message);
+
+                        $("#customer").val("");
+                        $("#movie").val("");
+                        $("#date").val("");
+                        $("#note").val("");
+                    })
+                    .fail(function (xhr, status, error) {
+                        console.error("AJAX Error:", error);
+
+                        toastr.error("Desila se greška prilikom iznajmljivanja filma.");
+                    });
+            });
+        });
+    </script>
+}

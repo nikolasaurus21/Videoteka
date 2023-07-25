@@ -1,0 +1,76 @@
+﻿@model Videoteka.ViewModels.MovieViewModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<p>
+    <h2>Naziv: @Model.Title</h2>
+</p>
+<div>
+    <h4>Informacije</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Naziv</dt>
+        <dd>@Html.DisplayFor(model => model.Title)</dd>
+
+        <dt>Žanr</dt>
+        <dd>@Html.DisplayFor(model => model.GenreName)</dd>
+
+        <dt>Datum unosa</dt>
+        <dd>@Html.DisplayFor(model => model.DateAddedInDb)</dd>
+
+        <dt>Datum izdanja</dt>
+        <dd>@Html.DisplayFor(model => model.DateOfMovie)</dd>
+
+        <dt>Na stanju</dt>
+        <dd>@Html.DisplayFor(model => model.NumberInStock)</dd>
+
+        <dt>Broj dostupnih</dt>
+        <dd>@Html.DisplayFor(model => model.NumberAvailable)</dd>
+    </dl>
+</div>
+
+@using (Html.BeginForm("Delete", "Movies", new { id = Model.Id }, FormMethod.Post, new { id = "deleteForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Potvrda brisanja filma</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Jeste li sigurni da želite obrisati ovaj film?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Odustani</button>
+                    <input type="submit" value="Izbriši" class="btn btn-danger" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-danger" onclick="openDeleteModal();">Izbriši</button>
+    @Html.ActionLink("Nazad", "Index", "Movies", null, new { @class = "btn btn-default" })
+}
+
+@section Scripts {
+    <script>
+        function openDeleteModal() {
+            $('#deleteModal').modal('show');
+        }
+
+        
+        $('#deleteModal').on('click', '.btn-danger', function () {
+            $('#deleteForm').submit();
+        });
+    </script>
+}
